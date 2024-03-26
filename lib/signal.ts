@@ -11,3 +11,4 @@ export const expense_data = signal(null);
 export const categories = signal(null);
 export const expense_sum = signal(null);
 export const setToday = signal(null);
+export const setCategories = signal(null);

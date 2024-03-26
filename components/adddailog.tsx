@@ -9,28 +9,27 @@ import {
   DrawerTitle
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { LoaderIcon, PlusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import useAddDialog from "@/lib/states/addDialog";
 import useExpenseDialog from "@/lib/states/expenseDialog";
 import useCatDialog from "@/lib/states/catDialog";
 import { getAllCategory } from "@/lib/pbhook";
-import { useAtom } from "jotai";
-import { Categories } from "@/lib/atoms";
+import { setCategories } from "@/lib/signal";
 
 export default function AddDialog(){
   const [isOpen, setOpenState] = useState(false);
   useAddDialog.g = setOpenState;
 
-  let [cat, setCategories] = useAtom(Categories);
+  let [cat, _setCategories] = useState<any>(null);
 
+  setCategories.value = _setCategories;
 
   useEffect(()=>{
    async function getData(){
-    setCategories(await getAllCategory() as any);
-   } 
-
+    _setCategories(await getAllCategory() as any);
+   }
    getData();
   }, []);
 
@@ -40,6 +39,16 @@ export default function AddDialog(){
         <DrawerHeader>
           <DrawerTitle>Expenses Categories</DrawerTitle>
         </DrawerHeader>
+        <div className="relative">
+        {
+    !cat ? (
+      <div className="w-full h-full absolute top-0 left-0 bg-primary-foreground/70
+            flex justify-center items-center">
+        <div>
+          <LoaderIcon size={50} className="animate-spin"/>
+        </div>
+      </div>
+    ) :
         <div className="w-full h-fit px-2 py-4 grid grid-cols-4 gap-y-8">
           <div className="flex justify-center">
             <Button onClick={()=>{
@@ -49,7 +58,7 @@ export default function AddDialog(){
               <PlusIcon className="h-6 w-6"/>
             </Button>
           </div>
-          {cat.map(({ name, emoji, isSpent }: any, i)=>(
+          {cat.map(({ name, emoji, isSpent }: any, i: number)=>(
             <Button key={i} onClick={()=>{
               setOpenState(false);
               useExpenseDialog.g([true, emoji, name, isSpent]);
@@ -58,6 +67,8 @@ export default function AddDialog(){
               <div className="name">{name}</div>
             </Button>
           ))}
+        </div>
+        }
         </div>
         <DrawerFooter>
           <DrawerClose>

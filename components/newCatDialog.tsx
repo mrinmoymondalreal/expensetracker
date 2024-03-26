@@ -25,6 +25,7 @@ import EmojiPicker, { EmojiStyle } from 'emoji-picker-react';
 
 import useCatDialog from "@/lib/states/catDialog";
 import { addNewCategory, getUser } from "@/lib/pbhook";
+import { setCategories } from "@/lib/signal";
 
 export default function CatDialog(){
   const [isOpen, setOpenState] = useState(false);
@@ -42,14 +43,17 @@ export default function CatDialog(){
 
     if(nameRef.current?.value.trim() == "" || !user.model) return false;
 
-    let data = await addNewCategory({
+    let data = {
       name: nameRef.current?.value,
       emoji,
       isSpent,
       user: user.model?.id
-    });
+    };
 
-    if(data) setOpenState(false);
+    addNewCategory(data);
+
+    setCategories.value((e:any)=>[...e, data]);
+    setOpenState(false);
   }
 
   return (
