@@ -16,6 +16,33 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+      <meta name="application-name" content="PWA App" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      <meta name="apple-mobile-web-app-title" content="Expense Tracker" />
+      <meta name="description" content="Tracker and Manager Expenses" />
+      <meta name="format-detection" content="telephone=no" />
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="msapplication-TileColor" content="#262626" />
+      <meta name="msapplication-tap-highlight" content="no" />
+      <meta name="theme-color" content="#FFFFFF" />
+
+      <link rel="manifest" href="/manifest.json" />
+      <link rel="shortcut icon" href="/icons/favicon.ico" />
+
+      <meta name="twitter:card" content="Tracker and Manager Expenses and Plan wisely" />
+      <meta name="twitter:title" content="Expense Tracker" />
+      <meta name="twitter:description" content="Tracker and Manager Expenses" />
+      <meta name="twitter:image" content="https://expensetracker-roan.vercel.app/icons/android-launchericon-192-192.png" />
+      <meta name="twitter:creator" content="@themrinmoyreal" />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="Expense Tracker" />
+      <meta property="og:description" content="Tracker and Manager Expenses" />
+      <meta property="og:site_name" content="Expense Tracker" />
+      <meta property="og:url" content="https://expensetracker-roan.vercel.app" />
+      <meta property="og:image" content="https://expensetracker-roan.vercel.app/icons/android-launchericon-72-72.png" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );
