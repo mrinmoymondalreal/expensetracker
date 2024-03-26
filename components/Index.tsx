@@ -10,6 +10,7 @@ import { LogOutButton } from "@/components/ClientHeader";
 import { useEffect, useState } from "react";
 import { getUser } from "@/lib/pbhook";
 import { useRouter } from "next/navigation";
+import { user } from "@/lib/signal";
 
 
 export default function Home() {
@@ -19,8 +20,11 @@ export default function Home() {
 
   useEffect(()=>{
     let run = async () =>{
-      let user = await getUser();
-      if(user.model && user.model.id) setLoading(false);
+      let _user = await getUser();
+      if(_user.model && _user.model.id){
+        user.value = _user.model;
+        setLoading(false);
+      }
       else router.push('/login');
     }
     if(isLoading){ run(); }

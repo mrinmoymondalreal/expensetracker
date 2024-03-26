@@ -5,11 +5,11 @@ import { filter, giveDate } from "@/lib/utils";
 import { Separator } from "@radix-ui/react-separator";
 import { useAtom } from "jotai";
 import { Button } from "./ui/button";
-import { BarChartBig, LoaderIcon, PlusIcon } from "lucide-react";
+import { BadgeIndianRupee, BarChartBig, LoaderIcon, PlusIcon } from "lucide-react";
 import useAddDialog from "@/lib/states/addDialog";
 import { memo, useEffect, useState } from "react";
 import { getAllExpenses } from "@/lib/pbhook";
-import { expense_data, setToday } from "@/lib/signal";
+import { expense_data, setToday, user } from "@/lib/signal";
 
 export function TotalSpent({ sum, setAmount }: any){
   const [ amount, _setAmount ] = useState<number>(sum);
@@ -25,6 +25,14 @@ export function TotalSpent({ sum, setAmount }: any){
       <Button variant="link">
         <BarChartBig className="mr-2 h-4 w-4" /> Analytics
       </Button>
+    </div>
+    <div className="analytics absolute left-0 top-0 mt-4 ml-2">
+      <Button variant="link">
+        <BadgeIndianRupee className="mr-2 h-4 w-4" /> Loan/Lending
+      </Button>
+    </div>
+    <div className="name absolute bottom-0 w-3/4 text-center text-sm">
+      Hello {user.value.name}
     </div>
     <div className="sub-heading text-sm text-gray-400">Spent this month</div>
     <div className={"amt flex text-2xl font-bold " + color}>
