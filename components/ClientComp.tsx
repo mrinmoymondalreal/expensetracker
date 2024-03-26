@@ -5,16 +5,18 @@ import { filter, giveDate } from "@/lib/utils";
 import { Separator } from "@radix-ui/react-separator";
 import { useAtom } from "jotai";
 import { Button } from "./ui/button";
-import { BarChartBig, PlusIcon } from "lucide-react";
+import { BarChartBig, LoaderIcon, PlusIcon } from "lucide-react";
 import useAddDialog from "@/lib/states/addDialog";
-import { useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import { getAllExpenses } from "@/lib/pbhook";
+import { expense_data, setToday } from "@/lib/signal";
 
-export function TotalSpent(){
-  const [ amount, setAmount ] = useAtom(TotalExpense);
-  const [ expenses ] = useAtom(ExpenseData);
-  let sum = expenses.filter(({ time })=>["same day", "yesterday", "same week", "same month"].indexOf(giveDate(time)) > -1).reduce((a, { amount: b })=>a+b, 0);
-  setAmount(sum);
+export function TotalSpent({ sum, setAmount }: any){
+  const [ amount, _setAmount ] = useState<number>(sum);
+  setAmount = _setAmount;
+  useEffect(()=>{
+    setAmount(sum);
+  }, [sum]);
   let color = amount < 0 ? "text-red-500" : "text-green-500";
   return (
     <div className="total-spent w-full h-64 relative
@@ -44,7 +46,7 @@ export function AddButton(){
   )
 }
 
-function Spent({ amount, name, emoji, time, isSpent, showDate }: any){
+const Spent = memo(function ({ amount, name, emoji, time, isSpent, showDate }: any){
   let color = isSpent ? "text-red-500" : "text-green-500";
 
   let date = new Date(time);
@@ -55,20 +57,21 @@ function Spent({ amount, name, emoji, time, isSpent, showDate }: any){
       <div className="icon flex-shrink text-4xl">{emoji}</div>
       <div className="spent-name flex-[4] px-4 flex flex-col justify-center -gap-y-4">
         <div className="name">{name}</div>
-        <div className="time text-xs font-semibold text-gray-400">{showDate && date.getUTCDay() + " " + date.toLocaleString('default', { month: 'long' }) + " " + date.getUTCFullYear()} {date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+        <div className="time text-xs font-semibold text-gray-400">{showDate && date.getDate() + " " + date.toLocaleString('default', { month: 'long' }) + " " + date.getUTCFullYear()} {date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
       </div>
       <div className={"spent-amt px-4 " + color}>{isSpent?"-":"+"} ₹ {new Number(amount).toLocaleString('en-IN')}</div>
     </div>
     <Separator className="my-4" />
     </>
   );
-}
+});
 
-function SpentsDiv({ data, name, showDate }: any){
+const SpentsDiv = function ({ data, name, showDate }: any){
   if(!data || data.length <= 0) return ""; 
   let spentToName = data.map(({ amount, isSpent }: any)=>(isSpent ? -1 : 1) * Number(amount)).reduce((current: number, acc: number)=>{
     return current + acc;
-  })
+  });
+
 
   return (
     <>
@@ -82,30 +85,56 @@ function SpentsDiv({ data, name, showDate }: any){
     </div>
     </>
   )
-}
+};
 
 export function AllSpents(){
-  const [ expenses, setExpense ] = useAtom(ExpenseData);
+  const expenses = expense_data;
+  const [data, setData] = useState<any>(null);
 
   useEffect(()=>{
-    async function getData(){
-      setExpense(await getAllExpenses() as any)
+    async function run(){
+      let g = await getAllExpenses();
+      expenses.value = g;
+      setData(g);
     }
-    getData();
+    run();
   }, []);
 
-  let [today, rest1] = filter(expenses, ({ time })=>giveDate(time) == "same day");
+  
+  let setAmount, sum = 0;
+  
+  let [today, rest1] = filter(data || [], ({ time })=>giveDate(time) == "same day");
   let [yesterday, rest2] = filter(rest1, ({ time })=>giveDate(time) == "yesterday");
   let [thisweek, rest3] = filter(rest2, ({ time })=>giveDate(time) == "same week");
   let [thismonth, rest4] = filter(rest3, ({ time })=>giveDate(time) == "same month");
+  
+  let [_today, _setToday] = useState(today);
+  setToday.value = _setToday;
+  
+  useEffect(()=>setToday.value(today),[today.length]);
 
-  return (
+  sum = [..._today, ...yesterday, ...thismonth, ...thisweek].reduce((a, { isSpent, amount: b }) =>{
+    if(isSpent) b = -b;
+    return a+b;
+  }, 0);
+
+  return ( !data ? (
+    <div className="w-full h-full absolute top-0 left-0 bg-primary-foreground/70
+            flex justify-center items-center">
+      <div>
+        <LoaderIcon size={50} className="animate-spin"/>
+      </div>
+    </div>
+  ) :
     <>
-    <SpentsDiv data={today} name="Today" showDate={false}/>
-    <SpentsDiv data={yesterday} name="Yesterday" showDate={false}/>
-    <SpentsDiv data={thisweek} name="This Week" showDate={true}/>
-    <SpentsDiv data={thismonth} name="This Month" showDate={true}/>
-    <SpentsDiv date={rest4} name="Others" showDate={true}/>
+    <TotalSpent sum={sum} setAmount={setAmount} />
+    <div className="sub-main">
+      <SpentsDiv data={_today.sort((a, b)=>b.time - a.time)} name="Today" showDate={false}/>
+      <SpentsDiv data={yesterday.sort((a, b)=>b.time - a.time)} name="Yesterday" showDate={false}/>
+      <SpentsDiv data={thisweek.sort((a, b)=>b.time - a.time)} name="This Week" showDate={true}/>
+      <SpentsDiv data={thismonth.sort((a, b)=>b.time - a.time)} name="This Month" showDate={true}/>
+      <SpentsDiv date={rest4.sort((a, b)=>b.time - a.time)} name="Others" showDate={true}/>
+    </div>
     </>
   );
 }

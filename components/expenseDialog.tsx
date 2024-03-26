@@ -14,6 +14,7 @@ import { useRef, useState } from "react";
 
 import useExpenseDialog from "@/lib/states/expenseDialog";
 import { addNewExpense, getUser } from "@/lib/pbhook";
+import { setToday } from "@/lib/signal";
 
 export default function ExpenseDialog(){
   const [isOpen, setOpenState] = useState<[boolean,string,string,boolean]>([false, "", "", false]);
@@ -27,16 +28,17 @@ export default function ExpenseDialog(){
 
     if(expenseRef.current?.value.trim() == "" || !user.model) return false;
 
-    let response = await addNewExpense({
+    let data = {
       "name": isOpen[2],
       "emoji": isOpen[1],
       "user": user.model.id,
       "time": new Date().getTime(),
-      "amount": expenseRef.current?.value,
+      amount: Math.abs(parseFloat(expenseRef.current?.value || '0')),
       "isSpent": isOpen[3]
-    });
-
-    if(response) setOpenState([false, '', '', false]);
+    };
+    addNewExpense(data);
+    setToday.value((e: any)=>[...e, data]);
+    setOpenState([false, '', '', false]);
 
   }
   return (

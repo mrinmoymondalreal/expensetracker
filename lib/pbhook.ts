@@ -1,4 +1,5 @@
 import PocketBase from 'pocketbase';
+import { user } from './signal';
 const pb = new PocketBase('https://path-choice.pockethost.io');
 
 export const login = async function(data: any, setError?: any): Promise<boolean>{
@@ -30,6 +31,8 @@ export const signUp = async (data: any, setError?: any): Promise<boolean> => {
 export const getUser = async function (){
   return pb.authStore;
 }
+
+getUser().then(e=>user.value = e.model);
 
 export const logout = async function(){
   pb.authStore.clear();
