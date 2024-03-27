@@ -27,8 +27,8 @@
       "sizes": "48x48"
     },
     {
-      "src": "icons/makable.png",
-      "sizes": "72x72",
+      "src": "icons/maskable.png",
+      "sizes": "512x512",
       "purpose": "any maskable"
     }
   ],

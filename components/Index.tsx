@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { getUser } from "@/lib/pbhook";
 import { useRouter } from "next/navigation";
 import { user } from "@/lib/signal";
+import ThemeSwitch from "./ThemeSwitch";
 
 
 export default function Home() {
@@ -43,9 +44,7 @@ export default function Home() {
 
         <header id="header" className="border-b-2 w-full border-primary h-16 flex items-center px-6">
           <div className="left flex-1 ">
-          <Button variant="outline" size="icon">
-            <SunIcon className="h-4 w-4" />
-          </Button>
+            <ThemeSwitch />
           </div>
           <div className="middle flex-[3] flex justify-center">Expense Tracker</div>
           <div className="right flex-1 flex justify-end">

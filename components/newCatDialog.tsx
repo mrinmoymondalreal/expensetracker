@@ -79,7 +79,7 @@ export default function CatDialog(){
             </DialogContent>
           </Dialog>
           <input type="text" ref={nameRef} placeholder="Name" className="flex-1 w-full text-center border-b-2 py-2 border-gray-500
-          placeholder:font-black placeholder:text-3xl text-3xl font-black outline-none" />
+          placeholder:font-black placeholder:text-3xl text-3xl font-black outline-none dark:bg-primary-foreground" />
         </div>
         <DrawerFooter>
           <Button onClick={handleSubmit}>Create</Button>

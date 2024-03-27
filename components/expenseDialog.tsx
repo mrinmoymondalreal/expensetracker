@@ -49,17 +49,17 @@ export default function ExpenseDialog(){
         </DrawerHeader>
         <div className="w-full px-2 py-4 flex flex-col items-center space-y-8">
           <div className="date text-sm">{date.getUTCDate() + " " + date.toLocaleString('default', { month: 'long' }) + " " + date.getUTCFullYear()} {date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }</div>
-          <div className="input flex justify-center items-center">
+          <div className="input flex justify-center items-center gap-x-2">
             <div id="currency" className="text-lg">$</div>
             <input ref={expenseRef} type="number" placeholder="0" className="w-[50%] h-fit text-center border-b-2  border-gray-500
-            placeholder:font-black placeholder:text-5xl text-5xl font-black outline-none" />
+            placeholder:font-black placeholder:text-5xl text-5xl font-black outline-none dark:bg-primary-foreground" />
           </div>
           <div className="arrow">
             <ArrowDown className="w-16 h-16 text-gray-500"/>
           </div>
-          <div className="icons flex flex-col items-center">
+          <div className="icons flex flex-col items-center gap-y-2">
             <div className="icon text-4xl">{isOpen[1]}</div>
-            <div className="name font-semibold text-gray-500">{isOpen[2]}</div>
+            <div className="name font-semibold text-gray-500 dark:text-gray-100">{isOpen[2]}</div>
           </div>
         </div>
         <DrawerFooter>

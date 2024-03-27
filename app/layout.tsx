@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider"
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,9 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-      <meta name="application-name" content="PWA App" />
+      <link rel="icon" href="/icons/favicon.ico" type="image/x-icon" sizes="16x16"/>
+      <meta name="application-name" content="Expense Tracker" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       <meta name="apple-mobile-web-app-title" content="Expense Tracker" />
@@ -43,7 +46,16 @@ export default function RootLayout({
       <meta property="og:url" content="https://expensetracker-roan.vercel.app" />
       <meta property="og:image" content="https://expensetracker-roan.vercel.app/icons/android-launchericon-72-72.png" />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
