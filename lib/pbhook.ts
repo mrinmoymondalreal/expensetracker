@@ -67,13 +67,18 @@ export const getAllCategory = async function(){
   }
 }
 
-export const getAllExpenses = async function(){
+export const deleteExpense = async function (id: string){
+  await pb.collection('expenses').delete(id);
+}
+
+export const getAllExpenses = async function(key: string){
   try{
     const records = await pb.collection('expenses').getFullList({
-      filter: `user="${(await getUser()).model?.id}"`
+       filter: `user.id="${(await getUser()).model?.id}"`
     });
     return records;
   }catch(err){
+    console.log(err);
     return [];
   }
 }

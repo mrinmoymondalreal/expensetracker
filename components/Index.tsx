@@ -29,6 +29,43 @@ export default function Home() {
       else router.push('/login');
     }
     if(isLoading){ run(); }
+
+    // Check if the browser supports notifications
+    if ('Notification' in window) {
+      // Request permission to send notifications
+      Notification.requestPermission().then(function (permission) {
+        if (permission === 'granted') {
+          // Permission granted, you can now send notifications
+          console.log('Notification permission granted');
+          if ('serviceWorker' in navigator) {
+            // Register a service worker hosted at the root of the
+            // site using the default scope.
+            navigator.serviceWorker.register(`/serviceWorker/notification.js`).then(
+              registration => {
+                console.log('Service worker registration succeeded:', registration);
+                // registration.showNotification('Daily Notification', {
+                //   body: 'This is your daily reminder!'
+                // });
+              },
+              /*catch*/ error => {
+                console.error(`Service worker registration failed: ${error}`);
+              }
+            );
+          } else {
+            console.error('Service workers are not supported.');
+          }
+        } else if (permission === 'denied') {
+          // Permission denied
+          console.warn('Notification permission denied');
+        } else {
+          // Permission dismissed (default)
+          console.warn('Notification permission dismissed');
+        }
+      });
+    } else {
+      console.warn('Notifications are not supported in this browser');
+    }
+
   }, []);
 
   return ( isLoading ? (
@@ -42,7 +79,7 @@ export default function Home() {
     <div className="flex justify-center w-full max-h-screen min-h-screen relative">
       <div className="max-w-[425px] flex-1 border-2 border-transparent relative overflow-y-scroll">
 
-        <header id="header" className="border-b-2 w-full border-primary h-16 flex items-center px-6">
+        <header id="header" className="border-b-2 w-full border-primary dark:border-gray-900 h-16 flex items-center px-6">
           <div className="left flex-1 ">
             <ThemeSwitch />
           </div>
